@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { SchoolModule } from './school/school.module';
 import { UserManagementModule } from './user-management/user-management.module';
 import { AttendanceModule } from './attendance/attendance.module';
+import { ResultsModule } from './results/results.module';
+import { SeedModule } from './common/seed.module';
 import databaseConfig from './config/database.config';
 import appConfig from './config/app.config';
 
@@ -34,6 +36,8 @@ import appConfig from './config/app.config';
     SchoolModule,
     UserManagementModule,
     AttendanceModule,
+    ResultsModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

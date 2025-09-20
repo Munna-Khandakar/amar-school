@@ -111,8 +111,11 @@ export default function LoginPage() {
                 <span className="px-2 bg-white text-gray-500">Demo Credentials</span>
               </div>
             </div>
-            <div className="mt-4 text-sm text-gray-600 space-y-1">
+            <div className="mt-4 text-sm text-gray-600 space-y-2">
               <p><strong>Super Admin:</strong> superadmin@amarschool.com / SuperAdmin123!</p>
+              <p><strong>School Admin:</strong> schooladmin@amarschool.com / SchoolAdmin123!</p>
+              <p><strong>Teacher:</strong> teacher@amarschool.com / Teacher123!</p>
+              <p><strong>Student:</strong> student1@amarschool.com / Student123!</p>
             </div>
           </div>
         </CardContent>
