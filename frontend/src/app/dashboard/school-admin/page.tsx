@@ -5,6 +5,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import { UserRole } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function SchoolAdminDashboard() {
   return (
@@ -74,22 +75,30 @@ export default function SchoolAdminDashboard() {
                 <CardDescription>Common school management tasks</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start" variant="outline">
-                  <span className="mr-2">👨‍🏫</span>
-                  Add Teacher
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <span className="mr-2">🎓</span>
-                  Add Student
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <span className="mr-2">📚</span>
-                  Create Class
-                </Button>
-                <Button className="w-full justify-start" variant="outline">
-                  <span className="mr-2">📊</span>
-                  View Reports
-                </Button>
+                <Link href="/dashboard/school-admin/teachers">
+                  <Button className="w-full justify-start" variant="outline">
+                    <span className="mr-2">👨‍🏫</span>
+                    Manage Teachers
+                  </Button>
+                </Link>
+                <Link href="/dashboard/school-admin/students">
+                  <Button className="w-full justify-start" variant="outline">
+                    <span className="mr-2">🎓</span>
+                    Manage Students
+                  </Button>
+                </Link>
+                <Link href="/dashboard/school-admin/classes">
+                  <Button className="w-full justify-start" variant="outline">
+                    <span className="mr-2">📚</span>
+                    Manage Classes
+                  </Button>
+                </Link>
+                <Link href="/dashboard/school-admin/reports">
+                  <Button className="w-full justify-start" variant="outline">
+                    <span className="mr-2">📊</span>
+                    View Reports
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -173,9 +182,11 @@ export default function SchoolAdminDashboard() {
                       </div>
                     </div>
                   ))}
-                  <Button variant="outline" className="w-full">
-                    View All Classes
-                  </Button>
+                  <Link href="/dashboard/school-admin/classes">
+                    <Button variant="outline" className="w-full">
+                      View All Classes
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
