@@ -1,0 +1,92 @@
+# School Management System Project
+
+## Project Overview
+Multi-tenant school management system with role-based access control supporting multiple schools under a super-admin architecture.
+
+## Technology Stack
+- **Backend**: NestJS 10 + MongoDB + JWT Authentication
+- **Frontend**: Next.js 14 + Tailwind CSS + shadcn/ui + TypeScript
+- **State Management**: Zustand
+- **SMS Integration**: Twilio/AWS SNS
+
+## User Roles
+1. **Super Admin**: Platform-wide management and school oversight
+2. **School Admin**: Complete school operations management  
+3. **Teacher**: Classroom management and student assessment
+4. **Student**: View personal academic information
+
+## Implementation Progress
+**Current Phase**: Foundation Setup
+**Next Step**: Initialize project structure with backend and frontend folders
+
+## Key Files
+- `requirements.md` - Complete project requirements and specifications
+- `implementation-steps.md` - Detailed 37-step implementation plan
+
+## Development Commands
+```bash
+# Backend (NestJS)
+npm run start:dev          # Start development server
+npm run build             # Build for production
+npm run test              # Run tests
+
+# Frontend (Next.js)  
+npm run dev               # Start development server
+npm run build             # Build for production
+npm run lint              # Run linting
+npm run type-check        # TypeScript type checking
+```
+
+## Environment Setup
+```bash
+# Required environment variables
+DB_CONNECTION_STRING=mongodb://localhost:27017/school-management
+JWT_SECRET=your-jwt-secret
+SMS_API_KEY=your-sms-provider-key
+SMS_API_SECRET=your-sms-provider-secret
+```
+
+## Project Structure (Planned)
+```
+amar-school/
+├── backend/              # NestJS backend
+│   ├── src/
+│   │   ├── auth/         # Authentication module
+│   │   ├── users/        # User management
+│   │   ├── schools/      # School management
+│   │   ├── attendance/   # Attendance system
+│   │   ├── results/      # Results management
+│   │   └── sms/          # SMS integration
+│   └── package.json
+├── frontend/             # Next.js frontend
+│   ├── src/
+│   │   ├── app/          # App router pages
+│   │   ├── components/   # Reusable components
+│   │   ├── lib/          # Utilities and API
+│   │   └── stores/       # Zustand stores
+│   └── package.json
+├── requirements.md
+├── implementation-steps.md
+└── .claude               # This file
+```
+
+## Current Tasks
+- [ ] Step 1: Initialize project structure with backend and frontend folders
+- [ ] Step 2: Set up NestJS backend with TypeScript and basic configuration
+- [ ] Step 3: Configure MongoDB connection with Mongoose
+- [ ] Step 4: Implement JWT authentication module and guards
+- [ ] Step 5: Create user schemas and role-based access control
+
+## Notes
+- Follow multi-tenant architecture principles
+- Ensure proper data isolation between schools
+- Implement comprehensive role-based access control
+- Focus on security and data validation
+- Plan for SMS usage tracking and billing
+
+## Important Reminders
+- Always test role permissions after implementing new features
+- Maintain data isolation between different schools
+- Implement proper error handling and validation
+- Follow TypeScript best practices
+- Use shadcn/ui components for consistent UI
