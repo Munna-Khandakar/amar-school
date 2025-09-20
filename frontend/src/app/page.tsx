@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function HomePage() {
   const router = useRouter();
@@ -17,7 +18,8 @@ export default function HomePage() {
   }, [user, router]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <ProtectedRoute requireAuth={false}>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       {/* Navigation */}
       <nav className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -195,5 +197,6 @@ export default function HomePage() {
         </div>
       </footer>
     </div>
+    </ProtectedRoute>
   );
 }
