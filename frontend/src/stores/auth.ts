@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { User, AuthResponse, LoginData } from '@/lib/types';
-import { authApi } from '@/lib/api';
+import { User, LoginData } from '@/lib/types';
+import { apiClient, ApiError } from '@/lib/api-client';
 
 interface AuthState {
   user: User | null;
@@ -25,20 +25,16 @@ export const useAuthStore = create<AuthState>()(
       login: async (data: LoginData) => {
         set({ isLoading: true, error: null });
         try {
-          const response: AuthResponse = await authApi.login(data);
+          const response = await apiClient.login(data);
           set({
             user: response.user,
-            token: response.access_token,
+            token: response.token,
             isLoading: false,
           });
-          localStorage.setItem('token', response.access_token);
         } catch (error: unknown) {
-          const errorMessage = error && typeof error === 'object' && 'response' in error
-            ? ((error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Login failed')
-            : 'Login failed';
-          
+          const apiError = error as ApiError;
           set({
-            error: errorMessage,
+            error: apiError.message || 'Login failed',
             isLoading: false,
           });
           throw error;
@@ -47,17 +43,15 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         set({ user: null, token: null, error: null });
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        apiClient.logout();
       },
 
       clearError: () => set({ error: null }),
 
       refreshToken: async () => {
         try {
-          const response = await authApi.refresh();
-          set({ token: response.access_token });
-          localStorage.setItem('token', response.access_token);
+          const response = await apiClient.refreshToken();
+          set({ token: response.token });
         } catch {
           get().logout();
         }
