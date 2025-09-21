@@ -27,7 +27,7 @@ export default function ProtectedRoute({
     }
 
     // If user is logged in but doesn't have required role
-    if (requireAuth && user && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    if (requireAuth && user && allowedRoles.length > 0 && !allowedRoles.includes(user.role as UserRole)) {
       // Redirect to appropriate dashboard based on their actual role
       const userDashboard = getDashboardPath(user.role);
       router.push(userDashboard);
@@ -72,15 +72,22 @@ export default function ProtectedRoute({
   return <>{children}</>;
 }
 
-function getDashboardPath(role: UserRole): string {
-  switch (role) {
+function getDashboardPath(role: UserRole | string): string {
+  // Handle both enum values and string values
+  const roleString = typeof role === 'string' ? role : role;
+
+  switch (roleString) {
     case UserRole.SUPER_ADMIN:
+    case 'super_admin':
       return '/dashboard/super-admin';
     case UserRole.SCHOOL_ADMIN:
+    case 'school_admin':
       return '/dashboard/school-admin';
     case UserRole.TEACHER:
+    case 'teacher':
       return '/dashboard/teacher';
     case UserRole.STUDENT:
+    case 'student':
       return '/dashboard/student';
     default:
       return '/login';

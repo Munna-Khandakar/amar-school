@@ -76,15 +76,22 @@ class ApiClient {
 
   private getAuthToken(): string | null {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('auth-token');
+      const authData = localStorage.getItem('auth-storage');
+      if (authData) {
+        try {
+          const parsed = JSON.parse(authData);
+          return parsed.state?.token || null;
+        } catch {
+          return null;
+        }
+      }
     }
     return null;
   }
 
   private handleUnauthorized() {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth-token');
-      localStorage.removeItem('auth-user');
+      localStorage.removeItem('auth-storage');
       window.location.href = '/login';
     }
   }
@@ -117,20 +124,17 @@ class ApiClient {
 
   // Authentication methods
   async login(credentials: { email: string; password: string }) {
-    const response = await this.post<{ user: Record<string, unknown>; token: string }>('/auth/login', credentials);
+    const response = await this.post<{ user: any; access_token: string }>('/auth/login', credentials);
 
-    if (typeof window !== 'undefined' && response.token) {
-      localStorage.setItem('auth-token', response.token);
-      localStorage.setItem('auth-user', JSON.stringify(response.user));
-    }
-
-    return response;
+    return {
+      user: response.user as any,
+      token: response.access_token
+    };
   }
 
   async logout() {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('auth-token');
-      localStorage.removeItem('auth-user');
+      localStorage.removeItem('auth-storage');
     }
   }
 
@@ -139,7 +143,10 @@ class ApiClient {
   }
 
   async refreshToken() {
-    return this.post('/auth/refresh');
+    const response = await this.post<{ access_token: string }>('/auth/refresh');
+    return {
+      token: response.access_token
+    };
   }
 
   // School management methods

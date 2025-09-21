@@ -34,7 +34,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginData) => {
     try {
       await login(data);
-      router.push('/dashboard');
+      // Don't manually redirect - let ProtectedRoute handle it
     } catch {
       // Error is handled in the store
     }
