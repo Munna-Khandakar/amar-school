@@ -38,28 +38,65 @@ export class SeedService implements OnModuleInit {
         this.logger.log('Super Admin created');
       }
 
-      // Check if demo teacher exists (without school dependency)
-      const existingTeacher = await this.userModel.findOne({ email: 'teacher@amarschool.com' });
+      // Check if demo school exists
+      const existingSchool = await this.schoolModel.findOne({ name: 'Demo High School' });
+      let demoSchool;
 
-      if (!existingTeacher) {
-        await this.createSimpleTeacher();
-        this.logger.log('Demo teacher created');
+      if (!existingSchool) {
+        demoSchool = await this.createDemoSchool();
+        this.logger.log('Demo school created');
+      } else {
+        demoSchool = existingSchool;
       }
 
       // Check if demo school admin exists
       const existingSchoolAdmin = await this.userModel.findOne({ email: 'schooladmin@amarschool.com' });
 
       if (!existingSchoolAdmin) {
-        await this.createSimpleSchoolAdmin();
+        await this.createSchoolAdmin(demoSchool._id.toString());
         this.logger.log('Demo school admin created');
+      } else if (!existingSchoolAdmin.schoolId) {
+        // Update existing school admin with schoolId
+        await this.userModel.findByIdAndUpdate(existingSchoolAdmin._id, {
+          schoolId: demoSchool._id
+        });
+        this.logger.log('Demo school admin updated with schoolId');
       }
 
-      // Check if demo student exists (without school dependency)
+      // Check if demo teacher exists
+      const existingTeacher = await this.userModel.findOne({ email: 'teacher@amarschool.com' });
+
+      if (!existingTeacher) {
+        await this.createDemoTeacher(demoSchool._id.toString());
+        this.logger.log('Demo teacher created');
+      } else if (!existingTeacher.schoolId) {
+        // Update existing teacher with schoolId
+        await this.userModel.findByIdAndUpdate(existingTeacher._id, {
+          schoolId: demoSchool._id
+        });
+        this.logger.log('Demo teacher updated with schoolId');
+      }
+
+      // Check if demo student exists
       const existingStudent = await this.userModel.findOne({ email: 'student1@amarschool.com' });
 
       if (!existingStudent) {
-        await this.createSimpleStudent();
+        await this.createDemoStudentWithSchool(demoSchool._id.toString());
         this.logger.log('Demo student created');
+      } else if (!existingStudent.schoolId) {
+        // Update existing student with schoolId
+        await this.userModel.findByIdAndUpdate(existingStudent._id, {
+          schoolId: demoSchool._id
+        });
+        this.logger.log('Demo student updated with schoolId');
+      }
+
+      // Check if demo classes exist
+      const existingClasses = await this.classModel.find({ schoolId: demoSchool._id });
+
+      if (existingClasses.length === 0) {
+        await this.createDemoClasses(demoSchool._id.toString());
+        this.logger.log('Demo classes created');
       }
 
       this.logger.log('Database seeding completed successfully');
@@ -121,7 +158,7 @@ export class SeedService implements OnModuleInit {
     await schoolAdmin.save();
   }
 
-  private async createSimpleStudent() {
+  private async createDemoStudentWithSchool(schoolId: string) {
     const hashedPassword = await bcrypt.hash('Student123!', 10);
 
     const student = new this.userModel({
@@ -130,6 +167,7 @@ export class SeedService implements OnModuleInit {
       email: 'student1@amarschool.com',
       password: hashedPassword,
       role: UserRole.STUDENT,
+      schoolId: schoolId,
       studentId: 'S001',
       rollNumber: '001',
       admissionNumber: 'ADM001',
