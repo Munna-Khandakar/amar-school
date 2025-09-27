@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/lib/api-client';
 import { User, CreateTeacherData, CreateStudentData, UpdateUserData, Class, UserRole } from '@/lib/types';
 import { useAuthStore } from '@/stores/auth';
@@ -29,46 +29,49 @@ export function useUsers(): UseUsersReturn {
   const { user } = useAuthStore();
   const schoolId = user?.schoolId;
 
-  const fetchTeachers = async () => {
+  const fetchTeachers = useCallback(async () => {
     if (!schoolId) return;
 
     try {
       setError(null);
       const response = await apiClient.getSchoolTeachers(schoolId, { limit: 100 });
       setTeachers(response.data || []);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch teachers');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch teachers';
+      setError(errorMessage);
       console.error('Error fetching teachers:', err);
     }
-  };
+  }, [schoolId]);
 
-  const fetchStudents = async () => {
+  const fetchStudents = useCallback(async () => {
     if (!schoolId) return;
 
     try {
       setError(null);
       const response = await apiClient.getSchoolStudents(schoolId, { limit: 100 });
       setStudents(response.data || []);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch students');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch students';
+      setError(errorMessage);
       console.error('Error fetching students:', err);
     }
-  };
+  }, [schoolId]);
 
-  const fetchClasses = async () => {
+  const fetchClasses = useCallback(async () => {
     if (!schoolId) return;
 
     try {
       setError(null);
       const response = await apiClient.getSchoolClasses(schoolId);
       setClasses(response || []);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch classes');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch classes';
+      setError(errorMessage);
       console.error('Error fetching classes:', err);
     }
-  };
+  }, [schoolId]);
 
-  const fetchAllData = async () => {
+  const fetchAllData = useCallback(async () => {
     if (!schoolId) {
       setIsLoading(false);
       return;
@@ -84,7 +87,7 @@ export function useUsers(): UseUsersReturn {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [schoolId, fetchTeachers, fetchStudents, fetchClasses]);
 
   const createTeacher = async (data: CreateTeacherData): Promise<User> => {
     try {
@@ -95,8 +98,9 @@ export function useUsers(): UseUsersReturn {
       });
       setTeachers(prev => [...prev, newTeacher]);
       return newTeacher;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create teacher');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create teacher';
+      setError(errorMessage);
       throw err;
     }
   };
@@ -110,8 +114,9 @@ export function useUsers(): UseUsersReturn {
       });
       setStudents(prev => [...prev, newStudent]);
       return newStudent;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create student');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create student';
+      setError(errorMessage);
       throw err;
     }
   };
@@ -133,8 +138,9 @@ export function useUsers(): UseUsersReturn {
       }
 
       return updatedUser;
-    } catch (err: any) {
-      setError(err.message || 'Failed to update user');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update user';
+      setError(errorMessage);
       throw err;
     }
   };
@@ -147,8 +153,9 @@ export function useUsers(): UseUsersReturn {
       // Remove from both arrays (we don't know which one it's in)
       setTeachers(prev => prev.filter(teacher => teacher.id !== id));
       setStudents(prev => prev.filter(student => student.id !== id));
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete user');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete user';
+      setError(errorMessage);
       throw err;
     }
   };
@@ -171,7 +178,7 @@ export function useUsers(): UseUsersReturn {
 
   useEffect(() => {
     fetchAllData();
-  }, [schoolId]);
+  }, [fetchAllData]);
 
   return {
     teachers,

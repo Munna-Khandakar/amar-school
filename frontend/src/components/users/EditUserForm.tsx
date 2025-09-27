@@ -115,8 +115,9 @@ export default function EditUserForm({ user, onSubmit, onCancel, classes, isLoad
       };
 
       await onSubmit(updateData);
-    } catch (error: any) {
-      setSubmitError(error.message || 'Failed to update user');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update user';
+      setSubmitError(errorMessage);
     }
   };
 

@@ -81,8 +81,9 @@ export default function CreateSchoolForm({ onSubmit, onCancel, isLoading }: Crea
       };
 
       await onSubmit(schoolData);
-    } catch (error: any) {
-      setSubmitError(error.message || 'Failed to create school');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create school';
+      setSubmitError(errorMessage);
     }
   };
 
@@ -229,7 +230,7 @@ export default function CreateSchoolForm({ onSubmit, onCancel, isLoading }: Crea
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>Term System *</Label>
-            <Select value={termSystem} onValueChange={(value) => setValue('termSystem', value as any)}>
+            <Select value={termSystem} onValueChange={(value) => setValue('termSystem', value as 'semester' | 'trimester' | 'quarterly')}>
               <SelectTrigger>
                 <SelectValue placeholder="Select term system" />
               </SelectTrigger>
@@ -243,7 +244,7 @@ export default function CreateSchoolForm({ onSubmit, onCancel, isLoading }: Crea
 
           <div>
             <Label>Grade System *</Label>
-            <Select value={gradeSystem} onValueChange={(value) => setValue('gradeSystem', value as any)}>
+            <Select value={gradeSystem} onValueChange={(value) => setValue('gradeSystem', value as 'percentage' | 'gpa' | 'letter')}>
               <SelectTrigger>
                 <SelectValue placeholder="Select grade system" />
               </SelectTrigger>

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CreateTeacherData, Class } from '@/lib/types';
+import { CreateTeacherData } from '@/lib/types';
 
 const teacherSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
@@ -32,11 +32,10 @@ type TeacherFormData = z.infer<typeof teacherSchema>;
 interface CreateTeacherFormProps {
   onSubmit: (data: CreateTeacherData) => Promise<void>;
   onCancel: () => void;
-  classes: Class[];
   isLoading?: boolean;
 }
 
-export default function CreateTeacherForm({ onSubmit, onCancel, classes, isLoading }: CreateTeacherFormProps) {
+export default function CreateTeacherForm({ onSubmit, onCancel, isLoading }: CreateTeacherFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
@@ -79,8 +78,9 @@ export default function CreateTeacherForm({ onSubmit, onCancel, classes, isLoadi
       };
 
       await onSubmit(teacherData);
-    } catch (error: any) {
-      setSubmitError(error.message || 'Failed to create teacher');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create teacher';
+      setSubmitError(errorMessage);
     }
   };
 

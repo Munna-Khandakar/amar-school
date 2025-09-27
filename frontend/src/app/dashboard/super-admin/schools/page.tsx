@@ -386,7 +386,7 @@ export default function SchoolsPage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Delete School</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete "{selectedSchool?.name}"? This action cannot be undone.
+                Are you sure you want to delete &quot;{selectedSchool?.name}&quot;? This action cannot be undone.
                 All associated data including students, teachers, and records will be permanently removed.
               </AlertDialogDescription>
             </AlertDialogHeader>

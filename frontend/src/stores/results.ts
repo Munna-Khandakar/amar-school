@@ -210,7 +210,8 @@ export const useResultsStore = create<ResultsState>((set) => ({
   getResults: async (params) => {
     set({ isLoading: true, error: null });
     try {
-      const results: Result[] = await apiClient.getResults(params);
+      const response = await apiClient.getResults(params);
+      const results = response.data;
       if (params?.studentId) {
         set({
           currentStudentResults: results,

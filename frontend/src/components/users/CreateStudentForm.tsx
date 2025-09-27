@@ -99,8 +99,9 @@ export default function CreateStudentForm({ onSubmit, onCancel, classes, isLoadi
       };
 
       await onSubmit(studentData);
-    } catch (error: any) {
-      setSubmitError(error.message || 'Failed to create student');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create student';
+      setSubmitError(errorMessage);
     }
   };
 
@@ -272,20 +273,20 @@ export default function CreateStudentForm({ onSubmit, onCancel, classes, isLoadi
         <h3 className="text-lg font-medium mb-3">Parent/Guardian Information</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="fatherName">Father's Name</Label>
+            <Label htmlFor="fatherName">Father&apos;s Name</Label>
             <Input
               id="fatherName"
               {...register('fatherName')}
-              placeholder="Father's full name"
+              placeholder="Father&apos;s full name"
             />
           </div>
 
           <div>
-            <Label htmlFor="motherName">Mother's Name</Label>
+            <Label htmlFor="motherName">Mother&apos;s Name</Label>
             <Input
               id="motherName"
               {...register('motherName')}
-              placeholder="Mother's full name"
+              placeholder="Mother&apos;s full name"
             />
           </div>
 
@@ -294,7 +295,7 @@ export default function CreateStudentForm({ onSubmit, onCancel, classes, isLoadi
             <Input
               id="guardianName"
               {...register('guardianName')}
-              placeholder="Guardian's full name"
+              placeholder="Guardian&apos;s full name"
             />
           </div>
 

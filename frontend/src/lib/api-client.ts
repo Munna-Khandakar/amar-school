@@ -1,4 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { User, UpdateUserData, CreateTeacherData, CreateStudentData, UpdateSchoolData } from './types';
+import { School, CreateSchoolData, SchoolStats } from '@/stores/schools';
+import { AttendanceRecord, BulkAttendanceData } from '@/stores/attendance';
+import { Result, BulkResultData, StudentReportCard, ClassResults, Subject } from '@/stores/results';
+import { Class, CreateClassData, UserManagementStats } from '@/stores/user-management';
 
 // API Response interfaces
 export interface ApiResponse<T = unknown> {
@@ -18,6 +23,16 @@ export interface PaginatedResponse<T> {
   total: number;
   totalPages: number;
   currentPage: number;
+}
+
+export interface LoginResponse {
+  user: User;
+  access_token: string;
+}
+
+export interface AuthResult {
+  user: User;
+  token: string;
 }
 
 class ApiClient {
@@ -123,11 +138,11 @@ class ApiClient {
   }
 
   // Authentication methods
-  async login(credentials: { email: string; password: string }) {
-    const response = await this.post<{ user: any; access_token: string }>('/auth/login', credentials);
+  async login(credentials: { email: string; password: string }): Promise<AuthResult> {
+    const response = await this.post<LoginResponse>('/auth/login', credentials);
 
     return {
-      user: response.user as any,
+      user: response.user,
       token: response.access_token
     };
   }
@@ -151,81 +166,82 @@ class ApiClient {
 
   // School management methods
   async getSchools(params?: { page?: number; limit?: number; search?: string }) {
-    return this.get<PaginatedResponse<Record<string, unknown>>>('/schools', { params });
+    return this.get<PaginatedResponse<School>>('/schools', { params });
   }
 
-  async createSchool(schoolData: Record<string, unknown>) {
-    return this.post('/schools', schoolData);
+  async createSchool(schoolData: CreateSchoolData): Promise<School> {
+    return this.post<School>('/schools', schoolData);
   }
 
-  async getSchool(id: string) {
-    return this.get(`/schools/${id}`);
+  async getSchool(id: string): Promise<School> {
+    return this.get<School>(`/schools/${id}`);
   }
 
-  async updateSchool(id: string, schoolData: Record<string, unknown>) {
-    return this.patch(`/schools/${id}`, schoolData);
+  async updateSchool(id: string, schoolData: UpdateSchoolData): Promise<School> {
+    return this.patch<School>(`/schools/${id}`, schoolData);
   }
 
-  async deleteSchool(id: string) {
+  async deleteSchool(id: string): Promise<void> {
     return this.delete(`/schools/${id}`);
   }
 
-  async getSchoolStats(id: string) {
-    return this.get(`/schools/${id}/stats`);
+  async getSchoolStats(id: string): Promise<SchoolStats> {
+    return this.get<SchoolStats>(`/schools/${id}/stats`);
   }
 
   // User management methods
-  async createTeacher(teacherData: Record<string, unknown>) {
-    return this.post('/user-management/teachers', teacherData);
+  async createTeacher(teacherData: CreateTeacherData): Promise<User> {
+    return this.post<User>('/user-management/teachers', teacherData);
   }
 
-  async createStudent(studentData: Record<string, unknown>) {
-    return this.post('/user-management/students', studentData);
+  async createStudent(studentData: CreateStudentData): Promise<User> {
+    return this.post<User>('/user-management/students', studentData);
   }
 
   async getSchoolTeachers(schoolId: string, params?: { page?: number; limit?: number; search?: string }) {
-    return this.get<PaginatedResponse<Record<string, unknown>>>(`/user-management/schools/${schoolId}/teachers`, { params });
+    return this.get<PaginatedResponse<User>>(`/user-management/schools/${schoolId}/teachers`, { params });
   }
 
   async getSchoolStudents(schoolId: string, params?: { page?: number; limit?: number; search?: string }) {
-    return this.get<PaginatedResponse<Record<string, unknown>>>(`/user-management/schools/${schoolId}/students`, { params });
+    return this.get<PaginatedResponse<User>>(`/user-management/schools/${schoolId}/students`, { params });
   }
 
-  async getUser(id: string) {
-    return this.get(`/user-management/users/${id}`);
+  async getUser(id: string): Promise<User> {
+    return this.get<User>(`/user-management/users/${id}`);
   }
 
-  async updateUser(id: string, userData: Record<string, unknown>) {
-    return this.patch(`/user-management/users/${id}`, userData);
+  async updateUser(id: string, userData: UpdateUserData): Promise<User> {
+    return this.patch<User>(`/user-management/users/${id}`, userData);
   }
 
-  async deleteUser(id: string) {
+  async deleteUser(id: string): Promise<void> {
     return this.delete(`/user-management/users/${id}`);
   }
 
-  async createClass(classData: Record<string, unknown>) {
-    return this.post('/user-management/classes', classData);
+  async createClass(classData: CreateClassData): Promise<Class> {
+    return this.post<Class>('/user-management/classes', classData);
   }
 
-  async getSchoolClasses(schoolId: string) {
-    return this.get(`/user-management/schools/${schoolId}/classes`);
+  async getSchoolClasses(schoolId: string): Promise<Class[]> {
+    return this.get<Class[]>(`/user-management/schools/${schoolId}/classes`);
   }
 
-  async getUserManagementStats(schoolId: string) {
+  async getUserManagementStats(schoolId: string): Promise<UserManagementStats> {
+    return this.get<UserManagementStats>(`/user-management/schools/${schoolId}/stats`);
     return this.get(`/user-management/schools/${schoolId}/stats`);
   }
 
   // Attendance methods
-  async markAttendance(attendanceData: Record<string, unknown>) {
-    return this.post('/attendance/mark', attendanceData);
+  async markAttendance(attendanceData: Partial<AttendanceRecord>): Promise<AttendanceRecord> {
+    return this.post<AttendanceRecord>('/attendance/mark', attendanceData);
   }
 
-  async markBulkAttendance(bulkData: Record<string, unknown>) {
-    return this.post('/attendance/mark-bulk', bulkData);
+  async markBulkAttendance(bulkData: BulkAttendanceData): Promise<AttendanceRecord[]> {
+    return this.post<AttendanceRecord[]>('/attendance/mark-bulk', bulkData);
   }
 
-  async getAttendance(params?: Record<string, unknown>) {
-    return this.get('/attendance', { params });
+  async getAttendance(params?: Record<string, unknown>): Promise<PaginatedResponse<AttendanceRecord>> {
+    return this.get<PaginatedResponse<AttendanceRecord>>('/attendance', { params });
   }
 
   async getStudentAttendanceStats(params?: Record<string, unknown>) {
@@ -245,41 +261,42 @@ class ApiClient {
   }
 
   // Results methods
-  async createResult(resultData: Record<string, unknown>) {
-    return this.post('/results', resultData);
+  async createResult(resultData: Partial<Result>): Promise<Result> {
+    return this.post<Result>('/results', resultData);
   }
 
-  async createBulkResults(bulkData: Record<string, unknown>) {
-    return this.post('/results/bulk', bulkData);
+  async createBulkResults(bulkData: BulkResultData): Promise<Result[]> {
+    return this.post<Result[]>('/results/bulk', bulkData);
   }
 
-  async getResults(params?: Record<string, unknown>) {
-    return this.get('/results', { params });
+  async getResults(params?: Record<string, unknown>): Promise<PaginatedResponse<Result>> {
+    return this.get<PaginatedResponse<Result>>('/results', { params });
   }
 
-  async getStudentReportCard(params?: Record<string, unknown>) {
+  async getStudentReportCard(params?: Record<string, unknown>): Promise<StudentReportCard> {
+    return this.get<StudentReportCard>('/results/report-card', { params });
     return this.get('/results/report-card', { params });
   }
 
-  async getClassResults(params?: Record<string, unknown>) {
-    return this.get('/results/class-results', { params });
+  async getClassResults(params?: Record<string, unknown>): Promise<ClassResults> {
+    return this.get<ClassResults>('/results/class-results', { params });
   }
 
-  async updateResult(id: string, resultData: Record<string, unknown>) {
-    return this.patch(`/results/${id}`, resultData);
+  async updateResult(id: string, resultData: Partial<Result>): Promise<Result> {
+    return this.patch<Result>(`/results/${id}`, resultData);
   }
 
   async deleteResult(id: string) {
     return this.delete(`/results/${id}`);
   }
 
-  async createSubject(subjectData: Record<string, unknown>) {
-    return this.post('/results/subjects', subjectData);
+  async createSubject(subjectData: Partial<Subject>): Promise<Subject> {
+    return this.post<Subject>('/results/subjects', subjectData);
   }
 
-  async getSubjects(schoolId: string, grade?: number) {
+  async getSubjects(schoolId: string, grade?: number): Promise<Subject[]> {
     const params = grade ? { grade: grade.toString() } : {};
-    return this.get(`/results/subjects/${schoolId}`, { params });
+    return this.get<Subject[]>(`/results/subjects/${schoolId}`, { params });
   }
 }
 

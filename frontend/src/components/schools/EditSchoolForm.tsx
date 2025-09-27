@@ -95,8 +95,9 @@ export default function EditSchoolForm({ school, onSubmit, onCancel, isLoading }
       };
 
       await onSubmit(updateData);
-    } catch (error: any) {
-      setSubmitError(error.message || 'Failed to update school');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update school';
+      setSubmitError(errorMessage);
     }
   };
 
@@ -241,7 +242,7 @@ export default function EditSchoolForm({ school, onSubmit, onCancel, isLoading }
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>Term System *</Label>
-            <Select value={termSystem} onValueChange={(value) => setValue('termSystem', value as any)}>
+            <Select value={termSystem} onValueChange={(value) => setValue('termSystem', value as 'semester' | 'trimester' | 'quarterly')}>
               <SelectTrigger>
                 <SelectValue placeholder="Select term system" />
               </SelectTrigger>
@@ -255,7 +256,7 @@ export default function EditSchoolForm({ school, onSubmit, onCancel, isLoading }
 
           <div>
             <Label>Grade System *</Label>
-            <Select value={gradeSystem} onValueChange={(value) => setValue('gradeSystem', value as any)}>
+            <Select value={gradeSystem} onValueChange={(value) => setValue('gradeSystem', value as 'percentage' | 'gpa' | 'letter')}>
               <SelectTrigger>
                 <SelectValue placeholder="Select grade system" />
               </SelectTrigger>

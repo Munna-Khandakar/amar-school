@@ -401,7 +401,7 @@ export default function StudentsPage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Student</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete "{selectedStudent?.firstName} {selectedStudent?.lastName}"? This action cannot be undone.
+                Are you sure you want to delete &quot;{selectedStudent?.firstName} {selectedStudent?.lastName}&quot;? This action cannot be undone.
                 All associated data including academic records and attendance will be permanently removed.
               </AlertDialogDescription>
             </AlertDialogHeader>

@@ -154,7 +154,6 @@ export default function TeachersPage() {
                   <CreateTeacherForm
                     onSubmit={handleCreateTeacher}
                     onCancel={() => setCreateDialogOpen(false)}
-                    classes={classes}
                     isLoading={actionLoading}
                   />
                 </DialogContent>
@@ -401,7 +400,7 @@ export default function TeachersPage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Teacher</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete "{selectedTeacher?.firstName} {selectedTeacher?.lastName}"? This action cannot be undone.
+                Are you sure you want to delete &quot;{selectedTeacher?.firstName} {selectedTeacher?.lastName}&quot;? This action cannot be undone.
                 All associated data including class assignments and records will be permanently removed.
               </AlertDialogDescription>
             </AlertDialogHeader>

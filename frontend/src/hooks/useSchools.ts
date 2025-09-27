@@ -27,8 +27,9 @@ export function useSchools(): UseSchoolsReturn {
       setError(null);
       const response = await apiClient.getSchools();
       setSchools(response.data || []);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch schools');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch schools';
+      setError(errorMessage);
       console.error('Error fetching schools:', err);
     } finally {
       setIsLoading(false);
@@ -41,8 +42,7 @@ export function useSchools(): UseSchoolsReturn {
       const newSchool = await apiClient.createSchool(data);
       setSchools(prev => [...prev, newSchool]);
       return newSchool;
-    } catch (err: any) {
-      setError(err.message || 'Failed to create school');
+    } catch (err: unknown) {
       throw err;
     }
   };
@@ -55,8 +55,9 @@ export function useSchools(): UseSchoolsReturn {
         school.id === id ? updatedSchool : school
       ));
       return updatedSchool;
-    } catch (err: any) {
-      setError(err.message || 'Failed to update school');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to update school';
+      setError(errorMessage);
       throw err;
     }
   };
@@ -66,8 +67,7 @@ export function useSchools(): UseSchoolsReturn {
       setError(null);
       await apiClient.deleteSchool(id);
       setSchools(prev => prev.filter(school => school.id !== id));
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete school');
+    } catch (err: unknown) {
       throw err;
     }
   };

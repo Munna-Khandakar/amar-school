@@ -142,7 +142,8 @@ export const useAttendanceStore = create<AttendanceState>((set) => ({
   getAttendance: async (params) => {
     set({ isLoading: true, error: null });
     try {
-      const records = await apiClient.getAttendance(params) as AttendanceRecord[];
+      const response = await apiClient.getAttendance(params);
+      const records = response.data;
       if (params?.classId) {
         set({
           currentClassAttendance: records,
